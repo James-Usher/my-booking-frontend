@@ -1,59 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import './App.css';
 
-// 這行是關鍵：它會自動抓取 Vercel 設定的網址，如果沒有，就用本機的 5000 埠
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 function App() {
   const [date, setDate] = useState(new Date());
   const [bookedDates, setBookedDates] = useState([]);
 
-  const formatDate = (d) => d.toLocaleDateString('en-CA');
+  const formatDate = (d) => {
+    const offset = d.getTimezoneOffset();
+    const adjustedDate = new Date(d.getTime() - (offset * 60 * 1000));
+    return adjustedDate.toISOString().split('T')[0];
+  };
 
   const fetchBookings = () => {
     fetch(`${API_BASE_URL}/api/bookings`)
       .then(res => res.json())
       .then(data => setBookedDates(data))
-      .catch(err => console.error("抓取失敗:", err));
+      .catch(err => console.error("Error:", err));
   };
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
-  const getTileClassName = ({ date, view }) => {
-    if (view === 'month' && bookedDates.includes(formatDate(date))) {
-      return 'booked-date';
-    }
-    return null;
-  };
-
   const handleBooking = () => {
-    const dateStr = formatDate(date);
     fetch(`${API_BASE_URL}/api/bookings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: dateStr })
+      body: JSON.stringify({ date: formatDate(date) })
     })
-    .then(res => {
-      if (!res.ok) throw new Error('預約失敗');
-      return res.json();
-    })
+    .then(res => res.json())
     .then(() => {
       alert("預約成功！");
       fetchBookings();
-    })
-    .catch(err => alert(err.message));
+    });
   };
 
   return (
-    <div className="App">
-      <h1>雲端預約系統</h1>
-      <Calendar onChange={setDate} value={date} tileClassName={getTileClassName} />
-      <button onClick={handleBooking} disabled={bookedDates.includes(formatDate(date))}>
-        {bookedDates.includes(formatDate(date)) ? "已被預約" : "立即預約"}
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>預約系統</h1>
+      <div style={{ display: 'inline-block' }}>
+        <Calendar onChange={setDate} value={date} />
+      </div>
+      <br />
+      <button onClick={handleBooking} style={{ marginTop: '20px', padding: '10px 20px' }}>
+        立即預約 {formatDate(date)}
       </button>
     </div>
   );
