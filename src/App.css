@@ -1,44 +1,66 @@
+/* 基礎排版 */
 .App {
-  padding: 40px;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.container {
-  margin-top: 20px;
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-/* 核心樣式：已預約的格子變紅色 */
-.booked-date {
-  background-color: #ff4d4f !important;
-  color: white !important;
-  border-radius: 4px;
-}
-
-/* 選中狀態下如果也是已預約，維持紅色 */
-.react-calendar__tile--active.booked-date {
-  background-color: #d9363e !important;
-}
-
-.status {
+  text-align: center;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  height: fit-content;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
+h1 {
+  color: #333;
+}
+
+/* 日曆容器居中 */
+.react-calendar {
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: none !important;
+}
+
+/* --- 關鍵部分：處理已被預約的日期顏色 --- */
+
+/* 1. 基本紅色背景 */
+.booked-date {
+  background-color: #ff4d4d !important;
+  color: white !important;
+}
+
+/* 2. 針對按鈕內部文字和圓形效果 */
+.react-calendar__tile.booked-date {
+  background: #ff4d4d !important;
+  color: white !important;
+  border-radius: 6px;
+}
+
+/* 3. 確保滑鼠滑過時維持紅色（不然會變回套件預設的灰色或藍色） */
+.react-calendar__tile.booked-date:enabled:hover,
+.react-calendar__tile.booked-date:enabled:focus {
+  background: #cc0000 !important;
+  color: white !important;
+}
+
+/* 4. 如果那是「今天」且被預約，也要顯示紅色 */
+.react-calendar__tile--now.booked-date {
+  background: #ff4d4d !important;
+}
+
+/* 按鈕樣式 */
 button {
-  padding: 10px 20px;
-  background-color: #1890ff;
-  color: white;
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
 }
 
 button:disabled {
