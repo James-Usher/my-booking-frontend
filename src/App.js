@@ -62,7 +62,7 @@ function App() {
 
   return (
     <div className="App" style={{ textAlign: 'center', padding: '20px' }}>
-      <h1>雲端預約系統</h1>
+      <h1>庭瑜雲端預約系統</h1>
       <div style={{ display: 'inline-block' }}>
         <Calendar 
           onChange={setDate} 
