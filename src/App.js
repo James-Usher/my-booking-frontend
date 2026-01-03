@@ -3,81 +3,58 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './App.css';
 
+// 這行是關鍵：它會自動抓取 Vercel 設定的網址，如果沒有，就用本機的 5000 埠
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function App() {
   const [date, setDate] = useState(new Date());
   const [bookedDates, setBookedDates] = useState([]);
 
-  // 格式化日期為 YYYY-MM-DD
-  const toSqlDate = (d) => {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const formatDate = (d) => d.toLocaleDateString('en-CA');
 
-  // 1. 初始化抓取
-  useEffect(() => {
-    fetch('https://silver-shoes-rush.loca.lt')
+  const fetchBookings = () => {
+    fetch(`${API_BASE_URL}/api/bookings`)
       .then(res => res.json())
       .then(data => setBookedDates(data))
       .catch(err => console.error("抓取失敗:", err));
+  };
+
+  useEffect(() => {
+    fetchBookings();
   }, []);
 
-  // 2. 判斷日曆顏色
   const getTileClassName = ({ date, view }) => {
-    if (view === 'month') {
-      const dateStr = toSqlDate(date);
-      if (bookedDates.includes(dateStr)) {
-        return 'booked-date';
-      }
+    if (view === 'month' && bookedDates.includes(formatDate(date))) {
+      return 'booked-date';
     }
     return null;
   };
 
-  // 3. 提交預約
   const handleBooking = () => {
-    const dateStr = toSqlDate(date);
-    console.log("📤 正在發送預約:", dateStr);
-
-    fetch('https://silver-shoes-rush.loca.lt', {
+    const dateStr = formatDate(date);
+    fetch(`${API_BASE_URL}/api/bookings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date: dateStr })
     })
-    .then(async res => {
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || '預約失敗');
-      return data;
+    .then(res => {
+      if (!res.ok) throw new Error('預約失敗');
+      return res.json();
     })
     .then(() => {
-      setBookedDates([...bookedDates, dateStr]);
-      alert("預約成功！資料已存入 MySQL");
+      alert("預約成功！");
+      fetchBookings();
     })
-    .catch(err => {
-      console.error("錯誤詳情:", err);
-      alert("預約失敗: " + err.message);
-    });
+    .catch(err => alert(err.message));
   };
 
   return (
     <div className="App">
-      <h1>庭瑜預約系統</h1>
-      <div className="booking-container">
-        <Calendar 
-          onChange={setDate} 
-          value={date} 
-          tileClassName={getTileClassName}
-        />
-        <div className="info">
-          <p>您選的日期: <strong>{toSqlDate(date)}</strong></p>
-          <button 
-            onClick={handleBooking} 
-            disabled={bookedDates.includes(toSqlDate(date))}
-          >
-            {bookedDates.includes(toSqlDate(date)) ? "已被預約" : "立即預約"}
-          </button>
-        </div>
-      </div>
+      <h1>雲端預約系統</h1>
+      <Calendar onChange={setDate} value={date} tileClassName={getTileClassName} />
+      <button onClick={handleBooking} disabled={bookedDates.includes(formatDate(date))}>
+        {bookedDates.includes(formatDate(date)) ? "已被預約" : "立即預約"}
+      </button>
     </div>
   );
 }
