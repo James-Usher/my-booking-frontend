@@ -1,51 +1,56 @@
-/* 基礎排版 */
+/* 1. 全域重設：確保 App 容器內文字預設都是黑色，背景白色 */
 .App {
   text-align: center;
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #ffffff; /* 確保背景是純白 */
+  background-color: #ffffff !important;
+  color: #333333 !important;
 }
 
-/* 修正：強制所有普通日期的字體為黑色，避免消失 */
+/* 2. 強制日曆所有文字（包含切換月份的按鈕、星期、日期）為黑色 */
+.react-calendar,
+.react-calendar__navigation button,
+.react-calendar__month-view__weekdays__weekday,
+.react-calendar__month-view__weekdays__weekday abbr,
 .react-calendar__tile {
-  color: #333333 !important; 
-  padding: 10px !important;
+  color: #333333 !important;
+  text-decoration: none !important;
 }
 
-/* 修正：週一到週日的標題也要是黑色 */
+/* 3. 處理「相鄰月份」的日期（讓它稍微淡一點，但還是要看得見） */
 .react-calendar__month-view__days__day--neighboringMonth {
-  color: #cccccc !important; /* 非本月的日期改為淺灰色 */
+  color: #aaaaaa !important;
 }
 
-/* --- 預約日期的樣式 --- */
-
-/* 1. 被預約的圓圈：紅色背景、白色字體 */
-.booked-date {
+/* 4. 被預約的日期：紅底白字 (這是唯一准許白色的地方) */
+.react-calendar__tile.booked-date,
+.react-calendar__tile.booked-date abbr {
   background-color: #ff4d4d !important;
-  color: #ffffff !important; /* 只有紅底時字體才是白色 */
+  color: #ffffff !important; /* 強制白字 */
   border-radius: 8px !important;
 }
 
-/* 2. 針對按鈕內部的強制設定 */
-.react-calendar__tile.booked-date {
-  background: #ff4d4d !important;
-  color: #ffffff !important;
-}
-
-/* 3. 滑鼠滑過已被預約的日期：深紅色 */
+/* 5. 滑鼠移上去被預約的日期時，維持紅底白字 */
 .react-calendar__tile.booked-date:enabled:hover,
 .react-calendar__tile.booked-date:enabled:focus {
-  background: #cc0000 !important;
+  background-color: #cc0000 !important;
   color: #ffffff !important;
 }
 
-/* 4. 修正：選中(點擊)日期時的顏色（預設藍色，可改為深灰或維持原本） */
-.react-calendar__tile--active {
-  background: #666666 !important;
-  color: white !important;
+/* 6. 當前點選的日期（非紅底時）：藍底白字 */
+.react-calendar__tile--active,
+.react-calendar__tile--active abbr {
+  background-color: #007bff !important;
+  color: #ffffff !important;
 }
 
-/* 按鈕樣式 */
+/* 7. 修正日曆上方「年份月份」按鈕的字體 */
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #e6e6e6 !important;
+}
+
+/* 8. 底部按鈕樣式 */
 button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -53,8 +58,5 @@ button {
   color: white;
   border: none;
   border-radius: 4px;
-}
-
-button:disabled {
-  background-color: #cccccc;
+  font-weight: bold;
 }
