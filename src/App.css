@@ -2,68 +2,59 @@
 .App {
   text-align: center;
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff; /* 確保背景是純白 */
 }
 
-h1 {
-  color: #333;
+/* 修正：強制所有普通日期的字體為黑色，避免消失 */
+.react-calendar__tile {
+  color: #333333 !important; 
+  padding: 10px !important;
 }
 
-/* 日曆容器居中 */
-.react-calendar {
-  margin: 0 auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  border: none !important;
+/* 修正：週一到週日的標題也要是黑色 */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #cccccc !important; /* 非本月的日期改為淺灰色 */
 }
 
-/* --- 關鍵部分：處理已被預約的日期顏色 --- */
+/* --- 預約日期的樣式 --- */
 
-/* 1. 基本紅色背景 */
+/* 1. 被預約的圓圈：紅色背景、白色字體 */
 .booked-date {
   background-color: #ff4d4d !important;
-  color: white !important;
+  color: #ffffff !important; /* 只有紅底時字體才是白色 */
+  border-radius: 8px !important;
 }
 
-/* 2. 針對按鈕內部文字和圓形效果 */
+/* 2. 針對按鈕內部的強制設定 */
 .react-calendar__tile.booked-date {
   background: #ff4d4d !important;
-  color: white !important;
-  border-radius: 6px;
+  color: #ffffff !important;
 }
 
-/* 3. 確保滑鼠滑過時維持紅色（不然會變回套件預設的灰色或藍色） */
+/* 3. 滑鼠滑過已被預約的日期：深紅色 */
 .react-calendar__tile.booked-date:enabled:hover,
 .react-calendar__tile.booked-date:enabled:focus {
   background: #cc0000 !important;
-  color: white !important;
+  color: #ffffff !important;
 }
 
-/* 4. 如果那是「今天」且被預約，也要顯示紅色 */
-.react-calendar__tile--now.booked-date {
-  background: #ff4d4d !important;
+/* 4. 修正：選中(點擊)日期時的顏色（預設藍色，可改為深灰或維持原本） */
+.react-calendar__tile--active {
+  background: #666666 !important;
+  color: white !important;
 }
 
 /* 按鈕樣式 */
 button {
   margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
   background-color: #007bff;
   color: white;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button:hover:not(:disabled) {
-  background-color: #0056b3;
+  border: none;
+  border-radius: 4px;
 }
 
 button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  background-color: #cccccc;
 }
